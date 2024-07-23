@@ -30,5 +30,21 @@ const getTourismDetail = async (req, res) => {
     res.status(500).send(error);
   }
 };
-
-module.exports = { searchTourism, getTourismDetail };
+const createMultipleTourism = async (req, res) => {
+    const tourismDataArray = req.body;
+    const batch = db.batch();
+    
+    tourismDataArray.forEach(tourismData => {
+      const docRef = db.collection('tourism').doc();
+      batch.set(docRef, tourismData);
+    });
+    
+    try {
+      await batch.commit();
+      res.status(201).send({ message: 'Tourism data added successfully' });
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  };
+  
+  module.exports = { searchTourism, getTourismDetail, createMultipleTourism };
